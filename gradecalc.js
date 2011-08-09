@@ -1,4 +1,4 @@
-var i = 0; //counts the number of assignments
+$(function(){var i = 0; //counts the number of assignments
 var noAssignments = true; //used to hide the assignments table till first row added
 $('table#assign').hide(); //hide assignments table
 var startCell = '<td><div style="display: none;">'; //put at beginning of each td cell
@@ -236,4 +236,5 @@ $("button#addCat").click(function() {
             $('.remove' + tempName).data('categoryName', tempName);
         }
     }
+});
 });
