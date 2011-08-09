@@ -1,4 +1,5 @@
-$(function(){var i = 0; //counts the number of assignments
+$(function(){
+var i = 0; //counts the number of assignments
 var noAssignments = true; //used to hide the assignments table till first row added
 $('table#assign').hide(); //hide assignments table
 var startCell = '<td><div style="display: none;">'; //put at beginning of each td cell
@@ -9,8 +10,8 @@ var regText = /^[\w\s]*$/;
 ///////////////////////////////////
 //         General functions
 //////////////////////////////////
-//Generates the html for the select areas with the categories
 
+//Generates the html for the select areas with the categories
 function categoryHTML() {
     var output = "";
     var tempCatNames = $('table#cat').data();
@@ -80,26 +81,6 @@ function updateEvents() {
             noteOff();
             $(this).val(temp);
         }
-    });
-
-    //Visually remove category from webpage
-    $('button[class^="remove"]').click(function() {
-        var categoryName = $(this).data('categoryName');
-        console.log(categoryName);
-        noteOn('going to remove ' + categoryName);
-        var theTR = $(this).parentsUntil('tbody');
-        var theTD = $(this).parentsUntil('tr');
-        var tempVal = theTR.parent().html();
-        theTR.find('td').each(function(i) {
-            tempVal = $(this).html();
-            $(this).replaceWith('<td><div class="removeMeNow" style="display:block">' + tempVal + '</div></td>');
-        });
-
-        $('.removeMeNow').animate({
-            height: 0
-        }, 500, function() {
-            theTR.remove();
-        });
     });
 
 }
@@ -229,8 +210,25 @@ $("button#addCat").click(function() {
             //append option should be use
             $("select").append('<option>' + $('input#newCatName').val() + '</option>');
 
+            //add click event here
+            $('.remove'+tempName).click(function() {
+                var categoryName = $(this).data('categoryName');
+                $('table#cat').removeData(categoryName);
+                var theTR = $(this).parentsUntil('tbody');
+                var theTD = $(this).parentsUntil('tr');
+                var tempVal = theTR.parent().html();
+                theTR.find('td').each(function(i) {
+                    tempVal = $(this).html();
+                    $(this).replaceWith('<td><div class="removeMeNow" style="display:block">' + tempVal + '</div></td>');
+                });
 
-            updateEvents();
+                $('.removeMeNow').animate({
+                    height: 0
+                }, 500, function() {
+                    theTR.remove();
+                });
+            });
+
             $('input#newCatName').val('');
             $('input#newPercent').val('');
             $('.remove' + tempName).data('categoryName', tempName);
