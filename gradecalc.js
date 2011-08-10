@@ -1,12 +1,11 @@
 $(function(){
-var i = 0; //counts the number of assignments
-var noAssignments = true; //used to hide the assignments table till first row added
-$('table#assign').hide(); //hide assignments table
+var numberOfAssignments = 1; //counts the number of assignments
 var startCell = '<td><div style="display: none;">'; //put at beginning of each td cell
 var endCell = '</div></td>'; //put at end of each td cell for animation hack
 var digits = /^\d{0,3}$/;
 var regText = /^[\w\s]*$/;
 //NOTE: data for category name and percentage are associated with table#cat
+
 ///////////////////////////////////
 //         General functions
 //////////////////////////////////
@@ -115,27 +114,22 @@ function checkCatInputs() {
 /////////////////////////////
 //   END General functions
 /////////////////////////////
-//
+
 /////////////////////////////
 //   START Event Handling
 /////////////////////////////
+
 //Adds an assignment row
 $("button#assign").click(function() {
 
-    //display the table headings
-    if (noAssignments) {
-        noAssignments = false;
-        $('table#assign').show();
-    }
-
     //count assignment number
-    i++;
+    numberOfAssignments++;
 
     //setup some output
-    var dropDownText = ' <input type="text" class="gradeCol" size="3" id="grade' + i + '" />';
+    var dropDownText = ' <input type="text" class="gradeCol" size="3" id="grade' + numberOfAssignments + '" />';
 
     //setting up different cells
-    var cell1 = startCell + '<span class="assignNum">Assignment ' + i + '</span>: ' + endCell;
+    var cell1 = startCell + '<span class="assignNum">Assignment ' + numberOfAssignments + '</span>: ' + endCell;
     var cell2 = startCell + dropDownText + endCell;
     var cell3 = startCell + '<select>' + categoryHTML() + '</select>' + endCell;
 
@@ -175,8 +169,8 @@ $('input#newPercent').blur(function() {
     }
     else {
         $(this).val(temp);
-
     }
+
 });
 
 
