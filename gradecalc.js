@@ -41,6 +41,13 @@ function noteOff() {
     }
 }
 
+    $('span.assignNum').click(function() {
+        var temp = $(this).html();
+        $(this).replaceWith('<input type="text" class="assignNum" value="' + temp + '" />');
+        $('input.assignNum').focus().select();
+        updateEvents();
+    });
+
 // Event handler function, run after each page update to reassociate events
 function updateEvents() {
 
