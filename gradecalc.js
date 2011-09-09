@@ -41,16 +41,15 @@ function noteOff() {
     }
 }
 
-    $('span.assignNum').click(function() {
+$('span.assignNum').click(function() {
         var temp = $(this).html();
         $(this).replaceWith('<input type="text" class="assignNum" value="' + temp + '" />');
         $('input.assignNum').focus().select();
         updateEvents();
-    });
+});
 
 // Event handler function, run after each page update to reassociate events
 function updateEvents() {
-
     //Click event for span of assignment name to make the assignment label editable
     $('span.assignNum').click(function() {
         var temp = $(this).html();
@@ -88,7 +87,25 @@ function updateEvents() {
             $(this).val(temp);
         }
     });
+}
 
+function rewriteCategorySelectBoxes(removedVal)
+{
+    var i=1;
+    var holdTemp; //holds selection temporarily
+    var innerStuff = categoryHTML();
+    for( i=1; i <=numberOfAssignments; i++)
+    {
+      holdTemp = $('#select'+ i).val(); //get the selected value
+
+      //rewrite the html for the select
+      $('#select'+ i).html(innerStuff);
+
+      if ( holdTemp == removedVal )
+          $('#select'+ i).val('--');
+      else
+          $('#select'+ i).val(holdTemp);
+    }
 }
 
 ////////////////////////////////////////////
@@ -128,7 +145,6 @@ function checkCatInputs() {
 
 //Adds an assignment row
 $("button#assign").click(function() {
-
     //count assignment number
     numberOfAssignments++;
 
@@ -138,7 +154,7 @@ $("button#assign").click(function() {
     //setting up different cells
     var cell1 = startCell + '<span class="assignNum">Assignment ' + numberOfAssignments + '</span>: ' + endCell;
     var cell2 = startCell + dropDownText + endCell;
-    var cell3 = startCell + '<select>' + categoryHTML() + '</select>' + endCell;
+    var cell3 = startCell + '<select id="select' + numberOfAssignments + '">' + categoryHTML() + '</select>' + endCell;
 
     //output the new row
     $('table#assign').append('<tr>' + cell1 + cell2 + cell3 + '</tr>');
@@ -152,7 +168,6 @@ $("button#assign").click(function() {
     });
 
     updateEvents();
-
 });
 
 
@@ -211,23 +226,28 @@ $("button#addCat").click(function() {
             //append option should be use
             $("select").append('<option>' + $('input#newCatName').val() + '</option>');
 
-            //add click event here
+            //add click event to remove category here
             $('.remove'+tempName).click(function() {
-                var categoryName = $(this).data('categoryName');
-                $('table#cat').removeData(categoryName);
-                var theTR = $(this).parentsUntil('tbody');
-                var theTD = $(this).parentsUntil('tr');
-                var tempVal = theTR.parent().html();
-                theTR.find('td').each(function(i) {
+                var categoryName = $(this).data('categoryName'); //grab category name
+                $('table#cat').removeData(categoryName); //remove data from categories
+                var theTR = $(this).parentsUntil('tbody'); //find DOM object
+                var theTD = $(this).parentsUntil('tr'); //find DOM object
+                var tempVal = theTR.parent().html(); //grab some html
+                theTR.find('td').each(function(i) { //go to the td and start replacing to setup animation
                     tempVal = $(this).html();
                     $(this).replaceWith('<td><div class="removeMeNow" style="display:block">' + tempVal + '</div></td>');
                 });
 
+                 //animate the removal of the cateogry
                 $('.removeMeNow').animate({
                     height: 0
                 }, 500, function() {
                     theTR.remove();
                 });
+
+                //rewrite the select options for categories on the grade rows.
+                //(This removes what the category as an option for the grade.)
+                rewriteCategorySelectBoxes(categoryName);
             });
 
             $('input#newCatName').val('');
