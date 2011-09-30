@@ -1,3 +1,7 @@
+/************
+ * Dynamic Grade Calculator
+ * Written by: Christopher Carlisle @ (carlic578 at gmail dot com)
+ */
 $(function(){
 var numberOfAssignments = 1; //counts the number of assignments
 var startCell = '<td><div style="display: none;">'; //put at beginning of each td cell
@@ -132,6 +136,26 @@ function sumLess100(newPercent)
         return false;
     else
         return true;
+}
+
+function checkCatsAddTo100()
+{
+    var tempCatNames = $('table#cat').data();
+    var sum=0;
+    var currentValueNum=0;
+    var t;
+    for (t in tempCatNames) {
+        if(t != "--")
+        {
+            currentValueNum = $('table#cat').data(t);
+            sum += parseFloat(currentValueNum);
+        }
+    }
+
+    if(sum == 100)
+        return true;
+    else
+        return false;
 }
 
 ////////////////////////////////////////////
@@ -290,12 +314,69 @@ $("button#addCat").click(function() {
 });
 
     $('button#calculate').click(function(){
-        //for each category
-            //grab grades for that category and sum
-            //divide by number of assignments with that assigned category
-            //multiply by the category percentage
-            //add to main sum
-        //display the grade
+        if(checkCatsAddTo100()){
+            var grade=0; //will be used for the grade
+            var tempCatNames = $('table#cat').data(); //list of category names
+            var i; //used to temp store a value from the tempCatNames obj.
+            var j=1; //used to loop through all assignment grades
+            var currentSum; //used to keep track of current categories sum
+            var currentNumGrades; //used to keep track of the current count of grades used
+            var currentValue; //used to hold current grade that has been parsed as a float
+            var catAvg=0; //used to store the categories average
+            var tempSelectedVal; //used to grab selected value for the `select` being looked at
+            var tempPartSum; //used to temporarily hold the part of the sum we are adding in
+
+            //for each category
+            for (i in tempCatNames) {
+                currentNumGrades=0; //reset to 0 for each category
+                currentSum=0; //reset to 0 for each category
+                catAvg=0; //reset to 0 for each cateogory
+                tempPartSum=0;
+
+                if (1) {
+                    //go through each `#idn` where `n` is the current row
+                    for(j=1; j <= numberOfAssignments; j++) {
+
+                        //reset to 0 for each row
+                        currentValue=0;
+
+                        //get the selected value
+                        tempSelectedVal = $('#select'+ j).val();
+
+                        //if selected category in the select == `i` then grab `#graden` where `n` is the current row
+                        if(tempSelectedVal == i) {
+                            currentValue = parseFloat($('#grade'+ j).val());
+
+                            //add to `currentSum`
+                            currentSum += currentValue;
+
+                            //increment total count of grades
+                            currentNumGrades++;
+                        }
+                    }
+                    //divide by number of assignments with that assigned category
+                    if(currentNumGrades == 0) {
+                        noteOn("You must have least one grade for each category");
+                        return;
+                    }
+                    else
+                        catAvg = currentSum/currentNumGrades;
+
+                    //multiply by the category percentage
+                    tempPartSum = catAvg * ($('table#cat').data(i)/100);
+
+                    //add to main sum
+                    grade += tempPartSum;
+                }
+
+            }
+            grade = grade.toFixed(2);
+
+            //display the grade
+            $('span#grade').text(grade);
+        }
+        else
+            noteOn("Your categories percentages must add up to 100%.");
 
     });
 
