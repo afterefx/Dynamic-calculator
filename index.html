@@ -6,7 +6,7 @@
   <title>carlic578/Dynamic-calculator @ GitHub</title>
 
   <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js'></script>
-  <script type='text/javascript' src='gradecalc.js'></script>
+  <script type='text/javascript' src='gradecalc.min.js'></script>
   <link rel="stylesheet" type="text/css" href="main.css"/>
   <style type="text/css">
     body {
@@ -63,7 +63,7 @@ Name: <input type="text" id="newCatName" /> Weight: <input type="text" id="newPe
         <td> <span class="assignNum">Assignment 1</span> : </td>
         <td> <input type="text" class="gradeCol" size="3" id="grade1"/> </td>
         <td>
-            <select>
+            <select id="select1">
                 <option>--</option>
             </select>
         </td>
@@ -71,8 +71,8 @@ Name: <input type="text" id="newCatName" /> Weight: <input type="text" id="newPe
 </table>
 <button id="assign">Add Assignment</button>
 <h1>Grade</h1>
-<button id="calculate">Calculate</button><span id="grade"></span>
-
+<span id="grade"></span><br />
+<button id="calculate">Calculate</button>
 
 
 <h2>Install</h2>
