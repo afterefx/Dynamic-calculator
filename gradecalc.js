@@ -2,7 +2,7 @@
  * Dynamic Grade Calculator
  * Written by: Christopher Carlisle @ (carlic578 at gmail dot com)
  */
-$(function(){
+$(function() {
 var numberOfAssignments = 1; //counts the number of assignments
 var startCell = '<td><div style="display: none;">'; //put at beginning of each td cell
 var endCell = '</div></td>'; //put at end of each td cell for animation hack
@@ -82,7 +82,7 @@ function updateEvents() {
     //Check for a grade on an assignment to see that it is based on a 100 point scale
     $('input.gradeCol').blur(function() {
         var temp = $.trim($(this).val());
-        if (!digits.test(temp) ){
+        if (!digits.test(temp) ) {
             noteOn('Please enter a number between 0 and 100');
             $(this).focus().select();
             return;
@@ -99,13 +99,11 @@ function updateEvents() {
     });
 }
 
-function rewriteCategorySelectBoxes(removedVal)
-{
+function rewriteCategorySelectBoxes(removedVal) {
     var i=1;
     var holdTemp; //holds selection temporarily
     var innerStuff = categoryHTML();
-    for( i=1; i <=numberOfAssignments; i++)
-    {
+    for( i=1; i <=numberOfAssignments; i++) {
       holdTemp = $('#select'+ i).val(); //get the selected value
 
       //rewrite the html for the select
@@ -118,15 +116,13 @@ function rewriteCategorySelectBoxes(removedVal)
     }
 }
 
-function sumLess100(newPercent)
-{
+function sumLess100(newPercent) {
     var tempCatNames = $('table#cat').data();
     var sum=0;
     var currentValueNum=0;
     var t;
     for (t in tempCatNames) {
-        if(t != "--")
-        {
+        if(t != "--") {
             currentValueNum = $('table#cat').data(t);
             sum += parseFloat(currentValueNum);
         }
@@ -138,15 +134,13 @@ function sumLess100(newPercent)
         return true;
 }
 
-function checkCatsAddTo100()
-{
+function checkCatsAddTo100() {
     var tempCatNames = $('table#cat').data();
     var sum=0;
     var currentValueNum=0;
     var t;
     for (t in tempCatNames) {
-        if(t != "--")
-        {
+        if(t != "--") {
             currentValueNum = $('table#cat').data(t);
             sum += parseFloat(currentValueNum);
         }
@@ -186,6 +180,16 @@ function checkCatInputs() {
 
     return true;
 }
+
+function catNameExists(temp) {
+    if( $('table#cat').data(temp) != undefined) {
+        noteOn('Please pick a category name that does not already exist.');
+        return true;
+    }
+    else
+        return false;
+}
+
 /////////////////////////////
 //   END General functions
 /////////////////////////////
@@ -254,58 +258,63 @@ $("button#addCat").click(function() {
         var tempName = $('input#newCatName').val();
         var tempPercent = $('input#newPercent').val();
 
-        if(sumLess100(tempPercent)) {
-            var cell1 = startCell + tempName + endCell;
-            var cell2 = startCell + tempPercent + "%" + endCell;
-            var cell3 = startCell + "<button class=\"remove" + tempName + "\" id=\"" + tempName + "\">Remove " + tempName + "</button>" + endCell;
+        //Remove any trailing whitespace at the end of the category name
+        tempName = tempName.replace(/\s+$/, '');
+        tempName = tempName.replace(/\s+/, ' ');
+        ///^\w+(\s\w+)*$/
 
-            if ($.trim(tempName) === "") {
-                noteOn("Please insert a category name.");
-                $('input#newCatName').focus();
-            }
-            else if ($.trim(tempPercent) === "") {
-                noteOn("Please insert a percentage.");
-                $('input#newPercent').focus();
-            }
-            else {
-                noteOff();
-                $('table#cat').append('<tr>' + cell1 + cell2 + cell3 + '</tr>');
-                $('table#cat').data(tempName, tempPercent); //added to data dictionary
-                $('table#cat tr:last div').slideDown('fast', function() {
+        if(sumLess100(tempPercent)) {
+            if(!catNameExists(tempName)) {
+                var cell1 = startCell + tempName + endCell;
+                var cell2 = startCell + tempPercent + "%" + endCell;
+                var cell3 = startCell + "<button class=\"remove" + tempName + "\" id=\"" + tempName + "\">Remove " + tempName + "</button>" + endCell;
+
+                if ($.trim(tempName) === "") {
+                    noteOn("Please insert a category name.");
+                    $('input#newCatName').focus();
+                }
+                else if ($.trim(tempPercent) === "") {
+                    noteOn("Please insert a percentage.");
+                    $('input#newPercent').focus();
+                }
+                else {
+                    noteOff();
+                    $('table#cat').append('<tr>' + cell1 + cell2 + cell3 + '</tr>');
+                    $('table#cat').data(tempName, tempPercent); //added to data dictionary
+                    $('table#cat tr:last div').slideDown('fast', function() {
                     $(this).replaceWith(
                     $(this).contents());
-                });
-
-                //append option should be use
-                $("select").append('<option>' + $('input#newCatName').val() + '</option>');
-
-                //add click event to remove category here
-                $('.remove'+tempName).click(function() {
-                    var categoryName = $(this).data('categoryName'); //grab category name
-                    $('table#cat').removeData(categoryName); //remove data from categories
-                    var theTR = $(this).parentsUntil('tbody'); //find DOM object
-                    var theTD = $(this).parentsUntil('tr'); //find DOM object
-                    var tempVal = theTR.parent().html(); //grab some html
-                    theTR.find('td').each(function(i) { //go to the td and start replacing to setup animation
-                        tempVal = $(this).html();
-                        $(this).replaceWith('<td><div class="removeMeNow" style="display:block">' + tempVal + '</div></td>');
                     });
 
-                     //animate the removal of the cateogry
-                    $('.removeMeNow').animate({
-                        height: 0
-                    }, 500, function() {
-                        theTR.remove();
+                    //append option should be use
+                    $("select").append('<option>' + $('input#newCatName').val() + '</option>');
+
+                    //add click event to remove category here
+                    $('.remove'+tempName).click(function() {
+                        var categoryName = $(this).data('categoryName'); //grab category name
+                        $('table#cat').removeData(categoryName); //remove data from categories
+                        var theTR = $(this).parentsUntil('tbody'); //find DOM object
+                        var theTD = $(this).parentsUntil('tr'); //find DOM object
+                        var tempVal = theTR.parent().html(); //grab some html
+                        theTR.find('td').each(function(i) { //go to the td and start replacing to setup animation
+                            tempVal = $(this).html();
+                            $(this).replaceWith('<td><div class="removeMeNow" style="display:block">' + tempVal + '</div></td>');
+                        });
+
+                         //animate the removal of the cateogry
+                        $('.removeMeNow').animate({ height: 0 }, 500, function() {
+                            theTR.remove();
+                        });
+
+                        //rewrite the select options for categories on the grade rows.
+                        //(This removes what the category as an option for the grade.)
+                        rewriteCategorySelectBoxes(categoryName);
                     });
 
-                    //rewrite the select options for categories on the grade rows.
-                    //(This removes what the category as an option for the grade.)
-                    rewriteCategorySelectBoxes(categoryName);
-                });
-
-                $('input#newCatName').val('');
-                $('input#newPercent').val('');
-                $('.remove' + tempName).data('categoryName', tempName);
+                    $('input#newCatName').val('');
+                    $('input#newPercent').val('');
+                    $('.remove' + tempName).data('categoryName', tempName);
+                }
             }
         }
         else
@@ -313,8 +322,8 @@ $("button#addCat").click(function() {
     }
 });
 
-    $('button#calculate').click(function(){
-        if(checkCatsAddTo100()){
+    $('button#calculate').click(function() {
+        if(checkCatsAddTo100()) {
             var grade=0; //will be used for the grade
             var tempCatNames = $('table#cat').data(); //list of category names
             var i; //used to temp store a value from the tempCatNames obj.
