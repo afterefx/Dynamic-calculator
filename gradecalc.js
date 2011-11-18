@@ -82,7 +82,7 @@ function updateEvents() {
     //Check for a grade on an assignment to see that it is based on a 100 point scale
     $('input.gradeCol').blur(function() {
         var temp = $.trim($(this).val());
-        if (!digits.test(temp) ) {
+        if (!digits.test(temp)  && temp != NULL) {
             noteOn('Please enter a number between 0 and 100');
             $(this).focus().select();
             return;
@@ -240,7 +240,7 @@ $('input#newCatName').blur(function() {
 $('input#newPercent').blur(function() {
     var temp = $.trim($(this).val());
     temp = parseFloat(temp);
-    if (!digits.test(temp) || temp < 0 || temp > 100) {
+    if ((!digits.test(temp) || temp < 0 || temp > 100) && temp != NULL) {
         noteOn('Please enter a number between 0 and 100');
         $(this).focus().select();
 
@@ -334,6 +334,7 @@ $("button#addCat").click(function() {
             var catAvg=0; //used to store the categories average
             var tempSelectedVal; //used to grab selected value for the `select` being looked at
             var tempPartSum; //used to temporarily hold the part of the sum we are adding in
+            var totalNumGrades=0; //used to check for at least one grade to calculate final grade
 
             //for each category
             for (i in tempCatNames) {
@@ -356,11 +357,15 @@ $("button#addCat").click(function() {
                         if(tempSelectedVal == i) {
                             currentValue = parseFloat($('#grade'+ j).val());
 
-                            //add to `currentSum`
-                            currentSum += currentValue;
+                            //if the value is not null
+                            if( !isNaN( currentValue ))
+                            {
+                                //add to `currentSum`
+                                currentSum += currentValue;
 
-                            //increment total count of grades
-                            currentNumGrades++;
+                                //increment total count of grades
+                                currentNumGrades++;
+                            }
                         }
                     }
                     //divide by number of assignments with that assigned category
@@ -376,9 +381,15 @@ $("button#addCat").click(function() {
 
                     //add to main sum
                     grade += tempPartSum;
+                    totalNumGrades += currentNumGrades;
                 }
 
             }
+            if(totalNumGrades == 0) {
+                noteOn("There must be at least one grade to calculte the final grade.");
+                return;
+            }
+
             grade = grade.toFixed(2);
 
             //display the grade
