@@ -1,6 +1,6 @@
 /************
  * Dynamic Grade Calculator
- * Written by: Christopher Carlisle @ (carlic578 at gmail dot com)
+ * Written by: Christopher Carlisle
  */
 $(function() {
 var numberOfAssignments = 1; //counts the number of assignments
